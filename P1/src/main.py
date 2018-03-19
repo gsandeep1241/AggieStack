@@ -1,23 +1,3 @@
-while True:
-    cmd = raw_input('Enter your command: ')
-    cmd_parts = cmd.split(" ")
-    
-    if(len(cmd_parts) <= 0 or len(cmd_parts) > 4):
-        print("Invalid command. Refer to the documentation for the correct command.")
-    
-    if(cmd_parts[0] == "quit"):
-        print("Goodbye!")
-        break;
-    elif(cmd_parts[0] != "aggiestack"):
-        print("Handle error");
-    elif(cmd_parts[1] == "config"):
-        print("Delegate to handle_config");
-    elif(cmd_parts[1] == "show"):
-        print("Delegate to handle_display")
-    else:
-        print("Handle error")
-        
-        
 def handle_config(cmd_parts):
     if(len(cmd_parts) != 4):
         #error
@@ -55,3 +35,23 @@ def handle_display(cmd_parts):
     else:
         #handle_error
         print("Handle Error!")
+
+while True:
+    cmd = raw_input('Enter your command: ')
+    cmd_parts = cmd.split(" ")
+    
+    if(len(cmd_parts) <= 0 or len(cmd_parts) > 4):
+        print("Invalid command. Refer to the documentation for the correct command.")
+    
+    if(cmd_parts[0] == "quit"):
+        print("Goodbye!")
+        break;
+    elif(cmd_parts[0] != "aggiestack"):
+        print("Invalid command. Refer to the documentation for the correct command.")
+    elif(cmd_parts[1] == "config"):
+        handle_config(cmd_parts)
+    elif(cmd_parts[1] == "show"):
+        handle_display(cmd_parts)
+    else:
+        print("Invalid command. Refer to the documentation for the correct command.")
+    
