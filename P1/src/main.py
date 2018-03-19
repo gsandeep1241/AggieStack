@@ -1,19 +1,39 @@
+import os.path
+
 def handle_config(cmd_parts):
     if(len(cmd_parts) != 4):
-        #error
-        print("Goodbye!")
+        print("Invalid command. Refer to the documentation for the correct command.")
+        
     if(cmd_parts[2] == "--hardware"):
-        #handle1
-        print("Handle 1!")
+        file = cmd_parts[3]
+        my_file = "../config/" + file
+        
+        if (os.path.exists(my_file)):
+            print("File exists!")
+        else:
+            print("File you specified does not exist!")
+            
     elif(cmd_parts[2] == "--images"):
-        #handle2
-        print("Handle 2!")
+        file = cmd_parts[3]
+        my_file = "../config/" + file
+        
+        if (os.path.exists(my_file)):
+            print("File exists!")
+        else:
+            print("File you specified does not exist!")
+            
     elif(cmd_parts[2] == "--flavors"):
-        #handle3
-        print("Handle 3!")
+        file = cmd_parts[3]
+        
+        my_file = "../config/" + file
+        
+        if (os.path.exists(my_file)):
+            print("File exists!")
+        else:
+            print("File you specified does not exist!")
+            
     else:
-        #handle_error
-        print("Handle Error!")
+        print("Invalid command. Refer to the documentation for the correct command.")
         
 
 def handle_display(cmd_parts):
