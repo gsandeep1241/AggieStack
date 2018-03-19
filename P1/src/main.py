@@ -1,15 +1,24 @@
 import os.path
 
+hardware = False
+images = False
+flavors = False
+
 def handle_config(cmd_parts):
+    global hardware
+    global images
+    global flavors
     if(len(cmd_parts) != 4):
         print("Invalid command. Refer to the documentation for the correct command.")
+        return;
         
     if(cmd_parts[2] == "--hardware"):
         file = cmd_parts[3]
         my_file = "../config/" + file
         
         if (os.path.exists(my_file)):
-            print("File exists!")
+            print("Hardware file exists!")
+            hardware = True
         else:
             print("File you specified does not exist!")
             
@@ -19,6 +28,7 @@ def handle_config(cmd_parts):
         
         if (os.path.exists(my_file)):
             print("File exists!")
+            images = True
         else:
             print("File you specified does not exist!")
             
@@ -29,6 +39,7 @@ def handle_config(cmd_parts):
         
         if (os.path.exists(my_file)):
             print("File exists!")
+            flavors = True
         else:
             print("File you specified does not exist!")
             
@@ -36,25 +47,42 @@ def handle_config(cmd_parts):
         print("Invalid command. Refer to the documentation for the correct command.")
         
 
+        
 def handle_display(cmd_parts):
+    global hardware
+    global images
+    global flavors
     if(len(cmd_parts) != 3):
-        #error
-        print("Goodbye!")
+        print("Invalid command. Refer to the documentation for the correct command.")
+        return;
+        
     if(cmd_parts[2] == "hardware"):
-        #handle1
-        print("Handle 1!")
+        if(hardware):
+            print("Show hardware")
+        else:
+            print("Read hardware config first!")
+            
     elif(cmd_parts[2] == "images"):
-        #handle2
-        print("Handle 2!")
+        if(images):
+            print("Show images")
+        else:
+            print("Read images config first!")
+            
     elif(cmd_parts[2] == "flavors"):
-        #handle3
-        print("Handle 3!")
+        if(flavors):
+            print("Show flavors")
+        else:
+            print("Read flavors config first!")
+            
     elif(cmd_parts[2] == "all"):
-        #handle4
-        print("Handle 4!")
+        if(hardware and images and flavors):
+            print("Show all")
+        else:
+            print("Read all hardware, images and flavors configs first!")
+            
     else:
-        #handle_error
-        print("Handle Error!")
+        print("Invalid command. Refer to the documentation for the correct command.")
+        
 
 while True:
     cmd = raw_input('Enter your command: ')
