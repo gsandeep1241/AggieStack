@@ -7,14 +7,14 @@ hardware = False
 images = False
 flavors = False
 
-hardware_configs = []
-image_configs = []
-flavor_comfigs = []
+hardware_configs = {}
+image_configs = {}
+flavor_configs = {}
 
 def handle_config(cmd_parts):
     global hardware, hardware_configs
     global images, image_configs
-    global flavors, flavor_comfigs
+    global flavors, flavor_configs
     if(len(cmd_parts) != 4):
         print("Invalid command. Refer to the documentation for the correct command.")
         return;
@@ -39,7 +39,7 @@ def handle_config(cmd_parts):
             for x in range(1, num_configs+1):
                 cfg = lines[x].split(" ")
                 h = Hardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4])
-                hardware_configs.append(h)
+                hardware_configs[cfg[0]] = h
 
             print len(hardware_configs), 'hardware configs loaded.'
 
@@ -66,7 +66,7 @@ def handle_config(cmd_parts):
             for x in range(1, num_configs+1):
                 cfg = lines[x].split(" ")
                 img = Image(cfg[0], cfg[1])
-                image_configs.append(img)
+                image_configs[cfg[0]] = img
 
             print len(image_configs), 'image configs loaded.'
 
@@ -93,9 +93,9 @@ def handle_config(cmd_parts):
             for x in range(1, num_configs+1):
                 cfg = lines[x].split(' ')
                 flv = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
-                flavor_comfigs.append(flv)
+                flavor_configs[cfg[0]] = flv
 
-            print len(flavor_comfigs), 'flavor configs loaded.'
+            print len(flavor_configs), 'flavor configs loaded.'
         else:
             print("File you specified does not exist!")
             
@@ -117,7 +117,8 @@ def handle_display(cmd_parts):
             print("Hardware configs available:")
             print("Name, IP, RAM, Num_Disks, Num_Vcpus")
 
-            for hw in hardware_configs:
+            for key in hardware_configs:
+                hw = hardware_configs[key]
                 print hw.name, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
         else:
             print("Read hardware config first!")
@@ -127,7 +128,8 @@ def handle_display(cmd_parts):
             print("Images available:")
             print("Name, Path")
 
-            for img in image_configs:
+            for key in image_configs:
+                img = image_configs[key]
                 print img.name, " : ", img.path
         else:
             print("Read images config first!")
@@ -137,7 +139,8 @@ def handle_display(cmd_parts):
             print("Flavors available:")
             print("Type, Ram, Disks, VCPUs")
 
-            for flv in flavor_comfigs:
+            for key in flavor_configs:
+                flv = flavor_configs[key]
                 print flv.type, " ", flv.ram, " ", flv.disks, " ", flv.vcpus
         else:
             print("Read flavors config first!")
