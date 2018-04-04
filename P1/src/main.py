@@ -92,7 +92,7 @@ def handle_config(cmd_parts):
 
             for x in range(1, num_configs+1):
                 cfg = lines[x].split(' ')
-                flv = Flavor(cfg[0], cfg[1], cfg[2])
+                flv = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
                 flavor_comfigs.append(flv)
 
             print len(flavor_comfigs), 'flavor configs loaded.'
@@ -134,7 +134,11 @@ def handle_display(cmd_parts):
             
     elif(cmd_parts[2] == "flavors"):
         if(flavors):
-            print("Show flavors")
+            print("Flavors available:")
+            print("Type, Ram, Disks, VCPUs")
+
+            for flv in flavor_comfigs:
+                print flv.type, " ", flv.ram, " ", flv.disks, " ", flv.vcpus
         else:
             print("Read flavors config first!")
             
