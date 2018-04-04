@@ -144,9 +144,17 @@ def handle_display(cmd_parts):
             
     elif(cmd_parts[2] == "all"):
         if(hardware and images and flavors):
-            print("Show all")
+
+            cmd_parts[2] = "hardware"
+            handle_display(cmd_parts)
+
+            cmd_parts[2] = "images"
+            handle_display(cmd_parts)
+
+            cmd_parts[2] = "flavors"
+            handle_display(cmd_parts)
         else:
-            print("Read all hardware, images and flavors configs first!")
+            print("Read hardware, image and flavor configs first.")
             
     else:
         print("Invalid command. Refer to the documentation for the correct command.")
