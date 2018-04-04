@@ -248,8 +248,21 @@ def handle_server(cmd_parts):
 
     if cmd_parts[2] == "list" and len(cmd_parts) == 3:
         print("Handle this.")
+
+        if len(instances) == 0:
+            print("No instances present!")
+            logger.info(curr_command + ": Success")
+            return
+
+        print "Name", "Image", "Flavor"
+        for key in instances:
+            print instances[key].name, " ", instances[key].image, " ", instances[key].flavor
+
+        logger.info(curr_command + ": Success")
+        return
+
     elif cmd_parts[2] == "delete" and len(cmd_parts) == 4:
-        
+
         if instances.get(cmd_parts[3]) == None:
             print("Instance does not exist")
             logger.info(curr_command + ": Failure")
