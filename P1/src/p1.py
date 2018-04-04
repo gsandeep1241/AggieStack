@@ -3,6 +3,7 @@ from new_hardware import NewHardware
 from new_image import NewImage
 from rack import Rack
 from flavor import Flavor
+from instance import Instance
 import logging
 
 logger = logging.getLogger(__name__)
@@ -21,6 +22,7 @@ hardware_configs = {}
 image_configs = {}
 flavor_configs = {}
 racks = {}
+instances = {}
 
 curr_command = ""
 
