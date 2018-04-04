@@ -218,6 +218,22 @@ def handle_admin(cmd_parts):
 def handle_server(cmd_parts):
     print("Handling servers")
 
+    if(len(cmd_parts) <= 2):
+        print("Invalid command. Refer to the documentation for the correct command.")
+        logger.info(curr_command + " : Failure")
+        return
+
+    if cmd_parts[2] == "list" and len(cmd_parts) == 3:
+        print("Handle this.")
+    elif cmd_parts[2] == "delete" and len(cmd_parts) == 4:
+        print("Handle this.")
+    elif len(cmd_parts) == 8 and cmd_parts[2] == "create" and cmd_parts[3] == "--image" and cmd_parts[5] == "--flavor":
+        print("Handle this")
+    else:
+        print("Invalid command. Refer to the documentation for the correct command.")
+        logger.info(curr_command + " : Failure")
+
+
 while True:
     cmd = raw_input('Enter your command: ')
     curr_command = cmd
