@@ -162,12 +162,30 @@ def handle_display(cmd_parts):
     else:
         print("Invalid command. Refer to the documentation for the correct command.")
         
+def handle_admin(cmd_parts):
+    if len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "hardware":
+        handle_display([cmd_parts[0], cmd_parts[2], cmd_parts[3]])
+    elif len(cmd_parts) == 5 and cmd_parts[2] == "can_host":
+        mac_name = cmd_parts[3]
+        flv = cmd_parts[4]
+
+        if (hardware_configs.get(mac_name) == None or flavor_configs.get(flv) == None):
+            print("Specified Hardware or Flavor does not exist.")
+            return
+
+        mac = hardware_configs[mac_name]
+        vm = flavor_configs[flv]
+
+        if(int(mac.mem) >= int(vm.ram) and int(mac.num_disks) >= int(vm.disks) and int(mac.num_vcpus) >= int(vm.vcpus)):
+            print("Yes")
+        else:
+            print("No")
 
 while True:
     cmd = raw_input('Enter your command: ')
     cmd_parts = cmd.split(" ")
     
-    if(len(cmd_parts) <= 0 or len(cmd_parts) > 4):
+    if(len(cmd_parts) <= 0 or len(cmd_parts) > 5):
         print("Invalid command. Refer to the documentation for the correct command.")
     
     if(cmd_parts[0] == "quit"):
@@ -179,6 +197,8 @@ while True:
         handle_config(cmd_parts)
     elif(cmd_parts[1] == "show"):
         handle_display(cmd_parts)
+    elif(cmd_parts[1] == "admin"):
+        handle_admin(cmd_parts)
     else:
         print("Invalid command. Refer to the documentation for the correct command.")
     
