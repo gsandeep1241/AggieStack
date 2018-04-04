@@ -36,7 +36,7 @@ def handle_config(cmd_parts):
 
             num_configs = int(lines[0])
 
-            for x in range(1, num_configs):
+            for x in range(1, num_configs+1):
                 cfg = lines[x].split(" ")
                 h = Hardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4])
                 hardware_configs.append(h)
@@ -63,7 +63,7 @@ def handle_config(cmd_parts):
 
             num_configs = int(lines[0])
 
-            for x in range(1, num_configs):
+            for x in range(1, num_configs+1):
                 cfg = lines[x].split(" ")
                 img = Image(cfg[0], cfg[1])
                 image_configs.append(img)
@@ -90,7 +90,7 @@ def handle_config(cmd_parts):
 
             num_configs = int(lines[0])
 
-            for x in range(1, num_configs):
+            for x in range(1, num_configs+1):
                 cfg = lines[x].split(' ')
                 flv = Flavor(cfg[0], cfg[1], cfg[2])
                 flavor_comfigs.append(flv)
@@ -114,7 +114,10 @@ def handle_display(cmd_parts):
         
     if(cmd_parts[2] == "hardware"):
         if(hardware):
-            print("Show hardware")
+            print("Hardware configs available:")
+
+            for hw in hardware_configs:
+                print hw.name, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
         else:
             print("Read hardware config first!")
             
