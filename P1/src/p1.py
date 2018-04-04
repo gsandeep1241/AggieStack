@@ -226,9 +226,12 @@ def handle_admin(cmd_parts):
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + ": Failure")
 
-def can_host(machine, flv):
-    print("Implement here")
-    return True
+def can_host(mac, vm):
+    if (int(mac.mem) >= int(vm.ram) and int(mac.num_disks) >= int(vm.disks) and int(mac.num_vcpus) >= int(
+            vm.vcpus)):
+        return True
+    else:
+        return False
 
 def handle_server(cmd_parts):
 
@@ -247,7 +250,6 @@ def handle_server(cmd_parts):
     elif cmd_parts[2] == "delete" and len(cmd_parts) == 4:
         print("Handle this.")
     elif len(cmd_parts) == 8 and cmd_parts[2] == "create" and cmd_parts[3] == "--image" and cmd_parts[5] == "--flavor":
-        print("Handle this")
 
         img = cmd_parts[4]
         flv = cmd_parts[6]
@@ -261,10 +263,31 @@ def handle_server(cmd_parts):
             logger.info(curr_command + ": Failure")
             return
 
-        for mac in hardware_configs.iteritems():
-            if (can_host(mac, flv)):
-                print("Host here")
+        if instances.get(cmd_parts[7]) != None:
+            print("Use a different instance name.")
+            logger.info(curr_command + ": Failure")
+            return
+
+        for key in hardware_configs:
+            if (can_host(hardware_configs[key], flavor_configs[flv])):
+
+                curr_mac = hardware_configs[key]
+                curr_flv = flavor_configs[flv]
+
+                curr_mac.mem = int(curr_mac.mem) - int(curr_flv.ram)
+                curr_mac.num_disks = int(curr_mac.num_disks) - int(curr_flv.disks)
+                curr_mac.num_vcpus = int(curr_mac.num_vcpus) - int(curr_flv.vcpus)
+
+                inst = Instance(cmd_parts[7], cmd_parts[4], cmd_parts[6])
+                instances[cmd_parts[7]] = inst
+
+                print("Successfully created an instance.")
+                logger.info(curr_command + ": Success")
                 return
+
+        print("Resources unavailable!")
+        logger.info(curr_command + ": Failure")
+        return
 
     else:
         print("Invalid command. Refer to the documentation for the correct command.")
