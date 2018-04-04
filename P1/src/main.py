@@ -1,13 +1,18 @@
 import os.path
+from hardware import Hardware
 
 hardware = False
 images = False
 flavors = False
 
+hardware_configs = []
+image_configs = []
+flavor_comfigs = []
+
 def handle_config(cmd_parts):
-    global hardware
-    global images
-    global flavors
+    global hardware, hardware_configs
+    global images, image_configs
+    global flavors, flavor_comfigs
     if(len(cmd_parts) != 4):
         print("Invalid command. Refer to the documentation for the correct command.")
         return;
@@ -17,8 +22,25 @@ def handle_config(cmd_parts):
         my_file = "../config/" + file
         
         if (os.path.exists(my_file)):
+
+            if hardware:
+                print("Hardware config is already loaded.")
+                return;
+
             print("Hardware file exists!")
             hardware = True
+
+            with open(my_file) as f:
+                lines = f.readlines()
+
+            num_configs = int(lines[0])
+
+            for x in range(1, num_configs):
+                cfg = lines[x].split(" ")
+                print(cfg)
+                h = Hardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4])
+                hardware_configs.append(h)
+
         else:
             print("File you specified does not exist!")
             
@@ -34,7 +56,6 @@ def handle_config(cmd_parts):
             
     elif(cmd_parts[2] == "--flavors"):
         file = cmd_parts[3]
-        
         my_file = "../config/" + file
         
         if (os.path.exists(my_file)):
