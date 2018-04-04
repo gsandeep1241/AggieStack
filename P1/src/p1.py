@@ -249,7 +249,26 @@ def handle_server(cmd_parts):
     if cmd_parts[2] == "list" and len(cmd_parts) == 3:
         print("Handle this.")
     elif cmd_parts[2] == "delete" and len(cmd_parts) == 4:
-        print("Handle this.")
+        
+        if instances.get(cmd_parts[3]) == None:
+            print("Instance does not exist")
+            logger.info(curr_command + ": Failure")
+            return
+
+        flv = flavor_configs[instances[cmd_parts[3]].flavor]
+        mac = hardware_configs[instance_on_server[cmd_parts[3]]]
+
+        mac.mem = int(mac.mem) + int(flv.ram)
+        mac.num_disks = int(mac.num_disks) + int(flv.disks)
+        mac.num_vcpus = int(mac.num_vcpus) + int(flv.vcpus)
+
+        del instances[cmd_parts[3]]
+        del instance_on_server[cmd_parts[3]]
+
+        print("Successfully deleted instance.")
+        logger.info(curr_command + ": Success")
+        return
+
     elif len(cmd_parts) == 8 and cmd_parts[2] == "create" and cmd_parts[3] == "--image" and cmd_parts[5] == "--flavor":
 
         img = cmd_parts[4]
