@@ -1,6 +1,7 @@
 import os.path
-from hardware import Hardware
-from image import Image
+from new_hardware import NewHardware
+from new_image import NewImage
+from rack import Rack
 from flavor import Flavor
 import logging
 
@@ -19,6 +20,7 @@ flavors = False
 hardware_configs = {}
 image_configs = {}
 flavor_configs = {}
+racks = {}
 
 curr_command = ""
 
@@ -35,7 +37,7 @@ def handle_config(cmd_parts):
 
     if (cmd_parts[2] == "--hardware"):
         file = cmd_parts[3]
-        my_file = "../config/" + file
+        my_file = "../p1_config/" + file
 
         if (os.path.exists(my_file)):
 
@@ -45,11 +47,18 @@ def handle_config(cmd_parts):
             with open(my_file) as f:
                 lines = f.readlines()
 
-            num_configs = int(lines[0])
+            num_racks = int(lines[0])
 
-            for x in range(1, num_configs + 1):
+            for x in range(1, num_racks+1):
+                rack = lines[x].split(" ")
+                r = Rack(rack[0], rack[1])
+                racks[rack[0]] = r
+
+            num_configs = int(lines[num_racks+1])
+
+            for x in range(num_racks+2, num_racks+num_configs + 2):
                 cfg = lines[x].split(" ")
-                h = Hardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4])
+                h = NewHardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4], cfg[5])
                 hardware_configs[cfg[0]] = h
 
             print len(hardware_configs), 'hardware configs loaded.'
@@ -61,7 +70,7 @@ def handle_config(cmd_parts):
 
     elif (cmd_parts[2] == "--images"):
         file = cmd_parts[3]
-        my_file = "../config/" + file
+        my_file = "../p1_config/" + file
 
         if (os.path.exists(my_file)):
 
@@ -75,7 +84,7 @@ def handle_config(cmd_parts):
 
             for x in range(1, num_configs + 1):
                 cfg = lines[x].split(" ")
-                img = Image(cfg[0], cfg[1])
+                img = NewImage(cfg[0], cfg[1], cfg[2])
                 image_configs[cfg[0]] = img
 
             print len(image_configs), 'image configs loaded.'
@@ -87,7 +96,7 @@ def handle_config(cmd_parts):
 
     elif (cmd_parts[2] == "--flavors"):
         file = cmd_parts[3]
-        my_file = "../config/" + file
+        my_file = "../p1_config/" + file
 
         if (os.path.exists(my_file)):
 
@@ -128,11 +137,11 @@ def handle_display(cmd_parts, all=None):
     if (cmd_parts[2] == "hardware"):
         if (hardware):
             print("Hardware configs available:")
-            print("Name, IP, RAM, Num_Disks, Num_Vcpus")
+            print("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus")
 
             for key in hardware_configs:
                 hw = hardware_configs[key]
-                print hw.name, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
+                print hw.name, " ", hw.rack, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -142,11 +151,11 @@ def handle_display(cmd_parts, all=None):
     elif (cmd_parts[2] == "images"):
         if (images):
             print("Images available:")
-            print("Name, Path")
+            print("Name, Size, Path")
 
             for key in image_configs:
                 img = image_configs[key]
-                print img.name, " : ", img.path
+                print img.name, " ", img.size, " ", img.path
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -216,7 +225,6 @@ def handle_admin(cmd_parts):
         logger.info(curr_command + ": Failure")
 
 def handle_server(cmd_parts):
-    print("Handling servers")
 
     if(len(cmd_parts) <= 2):
         print("Invalid command. Refer to the documentation for the correct command.")
