@@ -226,11 +226,20 @@ def handle_admin(cmd_parts):
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + ": Failure")
 
+def can_host(machine, flv):
+    print("Implement here")
+    return True
+
 def handle_server(cmd_parts):
+
+    if(not (hardware and images and flavors)):
+        print("First load hardware, images and flavors.")
+        logger.info(curr_command + ": Failure")
+        return
 
     if(len(cmd_parts) <= 2):
         print("Invalid command. Refer to the documentation for the correct command.")
-        logger.info(curr_command + " : Failure")
+        logger.info(curr_command + ": Failure")
         return
 
     if cmd_parts[2] == "list" and len(cmd_parts) == 3:
@@ -239,6 +248,24 @@ def handle_server(cmd_parts):
         print("Handle this.")
     elif len(cmd_parts) == 8 and cmd_parts[2] == "create" and cmd_parts[3] == "--image" and cmd_parts[5] == "--flavor":
         print("Handle this")
+
+        img = cmd_parts[4]
+        flv = cmd_parts[6]
+        if image_configs.get(img) == None:
+            print("Image specified is not available.")
+            logger.info(curr_command + ": Failure")
+            return
+
+        if flavor_configs.get(flv) == None:
+            print("Flavor specified is not available.")
+            logger.info(curr_command + ": Failure")
+            return
+
+        for mac in hardware_configs.iteritems():
+            if (can_host(mac, flv)):
+                print("Host here")
+                return
+
     else:
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + " : Failure")
