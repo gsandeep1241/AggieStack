@@ -38,11 +38,7 @@ def handle_config(cmd_parts):
         
         if (os.path.exists(my_file)):
 
-            if hardware:
-                print("Hardware config is already loaded.")
-                logger.info(curr_command + ": Success")
-                return;
-
+            hardware_configs = {}
             hardware = True
 
             with open(my_file) as f:
@@ -68,11 +64,7 @@ def handle_config(cmd_parts):
         
         if (os.path.exists(my_file)):
 
-            if images:
-                print("Images config already loaded.")
-                logger.info(curr_command + ": Success")
-                return;
-
+            image_configs = {}
             images = True
 
             with open(my_file) as f:
@@ -98,11 +90,7 @@ def handle_config(cmd_parts):
         
         if (os.path.exists(my_file)):
 
-            if flavors:
-                print("Flavors config already loaded.")
-                logger.info(curr_command + ": Success")
-                return;
-
+            flavor_configs = {}
             flavors = True
 
             with open(my_file) as f:
