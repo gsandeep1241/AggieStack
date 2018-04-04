@@ -23,6 +23,7 @@ image_configs = {}
 flavor_configs = {}
 racks = {}
 instances = {}
+instance_on_server = {}
 
 curr_command = ""
 
@@ -280,6 +281,8 @@ def handle_server(cmd_parts):
 
                 inst = Instance(cmd_parts[7], cmd_parts[4], cmd_parts[6])
                 instances[cmd_parts[7]] = inst
+
+                instance_on_server[cmd_parts[7]] = key
 
                 print("Successfully created an instance.")
                 logger.info(curr_command + ": Success")
