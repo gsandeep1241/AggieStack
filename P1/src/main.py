@@ -115,6 +115,7 @@ def handle_display(cmd_parts):
     if(cmd_parts[2] == "hardware"):
         if(hardware):
             print("Hardware configs available:")
+            print("Name, IP, RAM, Num_Disks, Num_Vcpus")
 
             for hw in hardware_configs:
                 print hw.name, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
@@ -123,7 +124,11 @@ def handle_display(cmd_parts):
             
     elif(cmd_parts[2] == "images"):
         if(images):
-            print("Show images")
+            print("Images available:")
+            print("Name, Path")
+
+            for img in image_configs:
+                print img.name, " : ", img.path
         else:
             print("Read images config first!")
             
