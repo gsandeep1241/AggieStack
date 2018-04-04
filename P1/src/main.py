@@ -1,5 +1,6 @@
 import os.path
 from hardware import Hardware
+from image import Image
 
 hardware = False
 images = False
@@ -27,7 +28,6 @@ def handle_config(cmd_parts):
                 print("Hardware config is already loaded.")
                 return;
 
-            print("Hardware file exists!")
             hardware = True
 
             with open(my_file) as f:
@@ -37,9 +37,10 @@ def handle_config(cmd_parts):
 
             for x in range(1, num_configs):
                 cfg = lines[x].split(" ")
-                print(cfg)
                 h = Hardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4])
                 hardware_configs.append(h)
+
+            print("Hardware configs loaded.")
 
         else:
             print("File you specified does not exist!")
@@ -49,8 +50,25 @@ def handle_config(cmd_parts):
         my_file = "../config/" + file
         
         if (os.path.exists(my_file)):
-            print("File exists!")
+
+            if images:
+                print("Images config already loaded.")
+                return;
+
             images = True
+
+            with open(my_file) as f:
+                lines = f.readlines()
+
+            num_configs = int(lines[0])
+
+            for x in range(1, num_configs):
+                cfg = lines[x].split(" ")
+                img = Image(cfg[0], cfg[1])
+                image_configs.append(img)
+
+            print("Image configs loaded.")
+
         else:
             print("File you specified does not exist!")
             
