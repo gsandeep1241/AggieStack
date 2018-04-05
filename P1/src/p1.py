@@ -215,7 +215,25 @@ def handle_display(cmd_parts, all=None):
 def handle_admin(cmd_parts):
     global curr_command
     if len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "hardware":
-        handle_display([cmd_parts[0], cmd_parts[2], cmd_parts[3]])
+
+        if (hardware):
+            print("Hardware configs available:")
+            print("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus")
+
+            if len(hardware_configs) == 0:
+                print("No hardware available")
+                logger.info(curr_command + ": Success")
+                return
+
+            for key in hardware_configs:
+                hw = hardware_configs[key]
+                print hw.name, " ", hw.rack, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
+
+            logger.info(curr_command + ": Success")
+        else:
+            print("Read hardware config first!")
+            logger.info(curr_command + ": Failure")
+
     elif len(cmd_parts) == 5 and cmd_parts[2] == "can_host":
         mac_name = cmd_parts[3]
         flv = cmd_parts[4]
