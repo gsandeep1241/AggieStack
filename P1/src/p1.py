@@ -248,6 +248,15 @@ def handle_admin(cmd_parts):
         logger.info(curr_command + ": Failure")
         return
 
+    elif len(cmd_parts) == 4 and cmd_parts[2] == "evacuate":
+        print("Handle this")
+
+    elif len(cmd_parts) == 4 and cmd_parts[2] == "remove":
+        print("Handle this")
+
+    elif len(cmd_parts) == 14 and cmd_parts[2] == "add" and cmd_parts[3] == "-mem" and cmd_parts[5] == "-disks" and cmd_parts[7] == "-vcpus" and cmd_parts[9] == "-ip" and cmd_parts[11] == "-racks":
+        print("Handle this!")
+
     else:
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + ": Failure")
