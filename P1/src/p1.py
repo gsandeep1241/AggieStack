@@ -21,6 +21,11 @@ flavors = False
 hardware_configs = {}
 image_configs = {}
 flavor_configs = {}
+
+hardware_configs_fixed = {}
+image_configs_fixed = {}
+flavor_configs_fixed = {}
+
 racks = {}
 instances = {}
 instance_on_server = {}
@@ -62,7 +67,9 @@ def handle_config(cmd_parts):
             for x in range(num_racks+2, num_racks+num_configs + 2):
                 cfg = lines[x].split(" ")
                 h = NewHardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4], cfg[5])
+                hf = NewHardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4], cfg[5])
                 hardware_configs[cfg[0]] = h
+                hardware_configs_fixed[cfg[0]] = hf
 
             print len(hardware_configs), 'hardware configs loaded.'
             logger.info(curr_command + ": Success")
@@ -88,7 +95,9 @@ def handle_config(cmd_parts):
             for x in range(1, num_configs + 1):
                 cfg = lines[x].split(" ")
                 img = NewImage(cfg[0], cfg[1], cfg[2])
+                imgf = NewImage(cfg[0], cfg[1], cfg[2])
                 image_configs[cfg[0]] = img
+                image_configs_fixed[cfg[0]] = imgf
 
             print len(image_configs), 'image configs loaded.'
             logger.info(curr_command + ": Success")
@@ -114,7 +123,9 @@ def handle_config(cmd_parts):
             for x in range(1, num_configs + 1):
                 cfg = lines[x].split(' ')
                 flv = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
+                flvf = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
                 flavor_configs[cfg[0]] = flv
+                flavor_configs_fixed[cfg[0]] = flvf
 
             print len(flavor_configs), 'flavor configs loaded.'
             logger.info(curr_command + ": Success")
@@ -142,8 +153,8 @@ def handle_display(cmd_parts, all=None):
             print("Hardware configs available:")
             print("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus")
 
-            for key in hardware_configs:
-                hw = hardware_configs[key]
+            for key in hardware_configs_fixed:
+                hw = hardware_configs_fixed[key]
                 print hw.name, " ", hw.rack, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
             if (all == None):
                 logger.info(curr_command + ": Success")
@@ -156,8 +167,8 @@ def handle_display(cmd_parts, all=None):
             print("Images available:")
             print("Name, Size, Path")
 
-            for key in image_configs:
-                img = image_configs[key]
+            for key in image_configs_fixed:
+                img = image_configs_fixed[key]
                 print img.name, " ", img.size, " ", img.path
             if (all == None):
                 logger.info(curr_command + ": Success")
@@ -170,8 +181,8 @@ def handle_display(cmd_parts, all=None):
             print("Flavors available:")
             print("Type, Ram, Disks, VCPUs")
 
-            for key in flavor_configs:
-                flv = flavor_configs[key]
+            for key in flavor_configs_fixed:
+                flv = flavor_configs_fixed[key]
                 print flv.type, " ", flv.ram, " ", flv.disks, " ", flv.vcpus
             if (all == None):
                 logger.info(curr_command + ": Success")
@@ -235,7 +246,7 @@ def can_host(mac, vm):
         return False
 
 def handle_server(cmd_parts):
-
+    global curr_command
     if(not (hardware and images and flavors)):
         print("First load hardware, images and flavors.")
         logger.info(curr_command + ": Failure")
