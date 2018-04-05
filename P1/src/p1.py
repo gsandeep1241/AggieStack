@@ -49,7 +49,6 @@ def handle_config(cmd_parts):
 
         if (os.path.exists(my_file)):
 
-            hardware_configs = {}
             hardware = True
 
             with open(my_file) as f:
@@ -84,7 +83,6 @@ def handle_config(cmd_parts):
 
         if (os.path.exists(my_file)):
 
-            image_configs = {}
             images = True
 
             with open(my_file) as f:
@@ -112,7 +110,6 @@ def handle_config(cmd_parts):
 
         if (os.path.exists(my_file)):
 
-            flavor_configs = {}
             flavors = True
 
             with open(my_file) as f:
@@ -254,10 +251,24 @@ def handle_admin(cmd_parts):
     elif len(cmd_parts) == 4 and cmd_parts[2] == "remove":
         print("Handle this")
 
-    elif len(cmd_parts) == 14 and cmd_parts[2] == "add" and cmd_parts[3] == "-mem" and cmd_parts[5] == "-disks" and cmd_parts[7] == "-vcpus" and cmd_parts[9] == "-ip" and cmd_parts[11] == "-racks":
-        print("Handle this!")
+    elif len(cmd_parts) == 14 and cmd_parts[2] == "add" and cmd_parts[3] == "-mem" and cmd_parts[5] == "-disks" and cmd_parts[7] == "-vcpus" and cmd_parts[9] == "-ip" and cmd_parts[11] == "-rack":
+
+        if(hardware_configs.get(cmd_parts[13]) != None):
+            print("Machine with the similar name exists")
+            logger.info(curr_command + ": Failure")
+            return
+
+        hw = NewHardware(cmd_parts[13], cmd_parts[12], cmd_parts[10], cmd_parts[4], cmd_parts[6], cmd_parts[8])
+        hw1 = NewHardware(cmd_parts[13], cmd_parts[12], cmd_parts[10], cmd_parts[4], cmd_parts[6], cmd_parts[8])
+        hardware_configs[cmd_parts[13]] = hw
+        hardware_configs_fixed[cmd_parts[13]] = hw1
+
+        print("Machine added.")
+        logger.info(curr_command + ": Success")
+        return
 
     else:
+        print len(cmd_parts)
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + ": Failure")
 

@@ -38,7 +38,6 @@ def handle_config(cmd_parts):
         
         if (os.path.exists(my_file)):
 
-            hardware_configs = {}
             hardware = True
 
             with open(my_file) as f:
@@ -64,7 +63,6 @@ def handle_config(cmd_parts):
         
         if (os.path.exists(my_file)):
 
-            image_configs = {}
             images = True
 
             with open(my_file) as f:
@@ -90,7 +88,6 @@ def handle_config(cmd_parts):
         
         if (os.path.exists(my_file)):
 
-            flavor_configs = {}
             flavors = True
 
             with open(my_file) as f:
