@@ -29,6 +29,7 @@ flavor_configs_fixed = {}
 racks = {}
 instances = {}
 instance_on_server = {}
+server_instances = {}
 
 curr_command = ""
 
@@ -249,7 +250,25 @@ def handle_admin(cmd_parts):
         print("Handle this")
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "remove":
-        print("Handle this")
+
+        if hardware_configs.get(cmd_parts[3]) == None:
+            print("Machine does not exist")
+            logger.info(curr_command + ": Failure")
+            return
+
+        if server_instances.get(cmd_parts[3]) != None:
+            all_instances = server_instances[cmd_parts[3]]
+            for ins in all_instances:
+                del instance_on_server[ins]
+                del instances[ins]
+            del server_instances[cmd_parts[3]]
+
+        del hardware_configs[cmd_parts[3]]
+        del hardware_configs_fixed[cmd_parts[3]]
+
+        print("Machine successfully removed")
+        logger.info(curr_command + ": Success")
+        return
 
     elif len(cmd_parts) == 14 and cmd_parts[2] == "add" and cmd_parts[3] == "-mem" and cmd_parts[5] == "-disks" and cmd_parts[7] == "-vcpus" and cmd_parts[9] == "-ip" and cmd_parts[11] == "-rack":
 
@@ -323,6 +342,8 @@ def handle_server(cmd_parts):
         del instances[cmd_parts[3]]
         del instance_on_server[cmd_parts[3]]
 
+        server_instances[mac].remove(cmd_parts[3])
+
         print("Successfully deleted instance.")
         logger.info(curr_command + ": Success")
         return
@@ -360,6 +381,10 @@ def handle_server(cmd_parts):
                 instances[cmd_parts[7]] = inst
 
                 instance_on_server[cmd_parts[7]] = key
+
+                if server_instances.get(key) == None:
+                    server_instances[key] = []
+                server_instances[key].append(cmd_parts[7])
 
                 print("Successfully created an instance.")
                 logger.info(curr_command + ": Success")
