@@ -234,24 +234,20 @@ def handle_admin(cmd_parts):
             print("Read hardware config first!")
             logger.info(curr_command + ": Failure")
 
-    elif len(cmd_parts) == 5 and cmd_parts[2] == "can_host":
-        mac_name = cmd_parts[3]
-        flv = cmd_parts[4]
+    elif len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "instances":
 
-        if (hardware_configs.get(mac_name) == None or flavor_configs.get(flv) == None):
-            print("Specified Hardware or Flavor does not exist.")
-            logger.info(curr_command + ": Failure")
+        if len(instance_on_server) == 0:
+            print("No instances present.")
+            logger.info(curr_command + " :Success")
             return
 
-        mac = hardware_configs[mac_name]
-        vm = flavor_configs[flv]
+        print "Instance", "Physical Server"
+        for key in instance_on_server:
+            print key, " ", instance_on_server[key]
 
-        if (int(mac.mem) >= int(vm.ram) and int(mac.num_disks) >= int(vm.disks) and int(mac.num_vcpus) >= int(
-                vm.vcpus)):
-            print("Yes")
-        else:
-            print("No")
-        logger.info(curr_command + ": Success")
+        logger.info(curr_command + ": Failure")
+        return
+
     else:
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + ": Failure")
