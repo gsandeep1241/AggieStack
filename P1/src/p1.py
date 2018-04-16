@@ -30,6 +30,7 @@ racks = {}
 instances = {}
 instance_on_server = {}
 server_instances = {}
+machines_on_racks = {}
 
 curr_command = ""
 
@@ -70,6 +71,10 @@ def handle_config(cmd_parts):
                 hf = NewHardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4], cfg[5])
                 hardware_configs[cfg[0]] = h
                 hardware_configs_fixed[cfg[0]] = hf
+
+                if machines_on_racks.get(cfg[1]) == None:
+                    machines_on_racks[cfg[1]] = []
+                machines_on_racks[cfg[1]].append(cfg[0])
 
             print len(hardware_configs), 'hardware configs loaded.'
             logger.info(curr_command + ": Success")
@@ -248,6 +253,9 @@ def handle_admin(cmd_parts):
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "evacuate":
         print("Handle this")
+        rack_name = cmd_parts[3]
+        if racks.get(rack_name) == None:
+            print("Rack does not exist")
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "remove":
 
