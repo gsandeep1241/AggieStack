@@ -252,10 +252,50 @@ def handle_admin(cmd_parts):
         return
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "evacuate":
-        print("Handle this")
         rack_name = cmd_parts[3]
         if racks.get(rack_name) == None:
             print("Rack does not exist")
+            logger.info(curr_command + ": Failure")
+            return
+
+        all_machines_on_rack = machines_on_racks[rack_name]
+        for machine in all_machines_on_rack:
+            if server_instances.get(machine) == None:
+                continue
+            all_instances = server_instances[machine]
+            for each_instance in all_instances:
+                done = False
+                for key in hardware_configs:
+                    if hardware_configs[key].rack == rack_name:
+                        continue
+                    if(can_host(hardware_configs[key], flavor_configs[instances[each_instance].flavor])):
+                        done = True
+                        curr_mac = hardware_configs[key]
+                        curr_flv = flavor_configs[instances[each_instance].flavor]
+
+                        curr_mac.mem = int(curr_mac.mem) - int(curr_flv.ram)
+                        curr_mac.num_disks = int(curr_mac.num_disks) - int(curr_flv.disks)
+                        curr_mac.num_vcpus = int(curr_mac.num_vcpus) - int(curr_flv.vcpus)
+
+                        inst = instances[each_instance]
+                        instances[each_instance] = inst
+
+                        instance_on_server[each_instance] = key
+
+                        if server_instances.get(key) == None:
+                            server_instances[key] = []
+                        server_instances[key].append(each_instance)
+                        break
+                if done:
+                    print(each_instance + " migrated")
+                else:
+                    print(each_instance + " not migrated.")
+            del hardware_configs[machine]
+            del server_instances[machine]
+        machines_on_racks[rack_name] = []
+
+        print("Migrated machines from the given rack. Some machines might not have migrated due lo lack of space.")
+        logger.info(curr_command + ": Success")
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "remove":
 
@@ -319,8 +359,7 @@ def handle_server(cmd_parts):
         return
 
     if cmd_parts[2] == "list" and len(cmd_parts) == 3:
-        print("Handle this.")
-
+        
         if len(instances) == 0:
             print("No instances present!")
             logger.info(curr_command + ": Success")
