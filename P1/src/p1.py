@@ -65,10 +65,6 @@ def handle_config(cmd_parts):
                 server_instances = {}
                 machines_on_racks = {}
                 hardware_configs_fixed = {}
-                images = False
-                flavors = False
-                image_configs = {}
-                flavor_configs = {}
 
             hardware = True
 
@@ -272,7 +268,7 @@ def handle_admin(cmd_parts):
         for key in instance_on_server:
             print key, " ", instance_on_server[key]
 
-        logger.info(curr_command + ": Failure")
+        logger.info(curr_command + ": Success")
         return
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "evacuate":
@@ -315,6 +311,8 @@ def handle_admin(cmd_parts):
                 if done:
                     print(each_instance + " migrated")
                 else:
+                    del instances[each_instance]
+                    del instance_on_server[each_instance]
                     print(each_instance + " not migrated.")
             del hardware_configs[machine]
             print(machine + " deleted")
@@ -479,6 +477,7 @@ def handle_server(cmd_parts):
 with open('input.txt', 'r') as f:
     for cmd in f:
         cmd = cmd.rstrip('\n')
+        curr_command = cmd
         print cmd
         cmd_parts = cmd.split(" ")
 

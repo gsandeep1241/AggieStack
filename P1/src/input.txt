@@ -2,9 +2,27 @@ aggiestack config --hardware hdwr-config.txt
 aggiestack config --images image-config.txt
 aggiestack config --flavors flavor-config.txt
 aggiestack show all
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance1
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance2
+aggiestack server create --image linux-ubuntu --flavor xlarge my-first-instance3
+aggiestack server create --image linux-ubuntu --flavor xlarge my-first-instance4
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance5
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance6
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance7
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance8
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance9
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance10
 aggiestack admin evacuate r1
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance11
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance12
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance13
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance14
+aggiestack server create --image linux-ubuntu --flavor xlarge my-first-instance15
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance16
+aggiestack server create --image linux-ubuntu --flavor xlarge my-first-instance17
+aggiestack server create --image linux-ubuntu --flavor xlarge my-first-instance18
+aggiestack server create --image linux-ubuntu --flavor large my-first-instance19
+aggiestack server create --image linux-ubuntu --flavor xlarge my-first-instance20
+aggiestack server delete my-first-instance6
+aggiestack admin show instances
 aggiestack admin show hardware
-aggiestack show hardware
-aggiestack config --hardware hdwr-config.txt
-aggiestack admin show hardware
-aggiestack show hardware
