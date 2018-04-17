@@ -39,7 +39,8 @@ def handle_config(cmd_parts):
     global hardware, hardware_configs
     global images, image_configs
     global flavors, flavor_configs
-    global curr_command
+    global curr_command,racks,instances,instance_on_server,server_instances,machines_on_racks
+    global hardware_configs_fixed, image_configs_fixed,flavor_configs_fixed
     if (len(cmd_parts) != 4):
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + ": Failure")
@@ -50,6 +51,24 @@ def handle_config(cmd_parts):
         my_file = "../p1_config/" + file
 
         if (os.path.exists(my_file)):
+
+            if hardware:
+                hardware_configs = {}
+                racks = {}
+                instances = {}
+                instance_on_server = {}
+                server_instances = {}
+                machines_on_racks = {}
+                racks = {}
+                instances = {}
+                instance_on_server = {}
+                server_instances = {}
+                machines_on_racks = {}
+                hardware_configs_fixed = {}
+                images = False
+                flavors = False
+                image_configs = {}
+                flavor_configs = {}
 
             hardware = True
 
@@ -142,10 +161,11 @@ def handle_config(cmd_parts):
 
 
 def handle_display(cmd_parts, all=None):
-    global hardware
-    global images
-    global flavors
-    global curr_command
+    global hardware, hardware_configs
+    global images, image_configs
+    global flavors, flavor_configs
+    global curr_command, racks, instances, instance_on_server, server_instances, machines_on_racks
+    global hardware_configs_fixed, image_configs_fixed, flavor_configs_fixed
     if (len(cmd_parts) != 3):
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + ": Failure")
@@ -216,7 +236,11 @@ def handle_display(cmd_parts, all=None):
 
 
 def handle_admin(cmd_parts):
-    global curr_command
+    global hardware, hardware_configs
+    global images, image_configs
+    global flavors, flavor_configs
+    global curr_command, racks, instances, instance_on_server, server_instances, machines_on_racks
+    global hardware_configs_fixed, image_configs_fixed, flavor_configs_fixed
     if len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "hardware":
 
         if (hardware):
@@ -261,6 +285,8 @@ def handle_admin(cmd_parts):
         all_machines_on_rack = machines_on_racks[rack_name]
         for machine in all_machines_on_rack:
             if server_instances.get(machine) == None:
+                del hardware_configs[machine]
+                print(machine + " deleted")
                 continue
             all_instances = server_instances[machine]
             for each_instance in all_instances:
@@ -291,6 +317,7 @@ def handle_admin(cmd_parts):
                 else:
                     print(each_instance + " not migrated.")
             del hardware_configs[machine]
+            print(machine + " deleted")
             del server_instances[machine]
         machines_on_racks[rack_name] = []
 
@@ -318,7 +345,7 @@ def handle_admin(cmd_parts):
         logger.info(curr_command + ": Success")
         return
 
-    elif len(cmd_parts) == 14 and cmd_parts[2] == "add" and cmd_parts[3] == "-mem" and cmd_parts[5] == "-disks" and cmd_parts[7] == "-vcpus" and cmd_parts[9] == "-ip" and cmd_parts[11] == "-rack":
+    elif len(cmd_parts) == 14 and cmd_parts[2] == "add" and cmd_parts[3] == "-mem" and cmd_parts[5] == "-disk" and cmd_parts[7] == "-vcpus" and cmd_parts[9] == "-ip" and cmd_parts[11] == "-rack":
 
         if(hardware_configs.get(cmd_parts[13]) != None):
             print("Machine with the similar name exists")
@@ -335,7 +362,6 @@ def handle_admin(cmd_parts):
         return
 
     else:
-        print len(cmd_parts)
         print("Invalid command. Refer to the documentation for the correct command.")
         logger.info(curr_command + ": Failure")
 
@@ -347,7 +373,11 @@ def can_host(mac, vm):
         return False
 
 def handle_server(cmd_parts):
-    global curr_command
+    global hardware, hardware_configs
+    global images, image_configs
+    global flavors, flavor_configs
+    global curr_command, racks, instances, instance_on_server, server_instances, machines_on_racks
+    global hardware_configs_fixed, image_configs_fixed, flavor_configs_fixed
     if(not (hardware and images and flavors)):
         print("First load hardware, images and flavors.")
         logger.info(curr_command + ": Failure")
@@ -359,7 +389,7 @@ def handle_server(cmd_parts):
         return
 
     if cmd_parts[2] == "list" and len(cmd_parts) == 3:
-        
+
         if len(instances) == 0:
             print("No instances present!")
             logger.info(curr_command + ": Success")
@@ -389,7 +419,7 @@ def handle_server(cmd_parts):
         del instances[cmd_parts[3]]
         del instance_on_server[cmd_parts[3]]
 
-        server_instances[mac].remove(cmd_parts[3])
+        server_instances[mac.name].remove(cmd_parts[3])
 
         print("Successfully deleted instance.")
         logger.info(curr_command + ": Success")
@@ -446,30 +476,31 @@ def handle_server(cmd_parts):
         logger.info(curr_command + " : Failure")
 
 
-while True:
-    cmd = raw_input('Enter your command: ')
-    curr_command = cmd
-    cmd_parts = cmd.split(" ")
+with open('input.txt', 'r') as f:
+    for cmd in f:
+        cmd = cmd.rstrip('\n')
+        print cmd
+        cmd_parts = cmd.split(" ")
 
-    if (len(cmd_parts) <= 0):
-        print("Invalid command. Refer to the documentation for the correct command.")
-        logger.info(curr_command + ": Failure")
+        if (len(cmd_parts) <= 0):
+            print("Invalid command. Refer to the documentation for the correct command.")
+            logger.info(curr_command + ": Failure")
 
-    if (cmd_parts[0] == "quit"):
-        print("Goodbye!")
-        logger.info(curr_command + ": Success")
-        break;
-    elif (cmd_parts[0] != "aggiestack"):
-        print("Invalid command. Refer to the documentation for the correct command.")
-        logger.info(curr_command + ": Failure")
-    elif (cmd_parts[1] == "config"):
-        handle_config(cmd_parts)
-    elif (cmd_parts[1] == "show"):
-        handle_display(cmd_parts)
-    elif (cmd_parts[1] == "server"):
-        handle_server(cmd_parts)
-    elif (cmd_parts[1] == "admin"):
-        handle_admin(cmd_parts)
-    else:
-        print("Invalid command. Refer to the documentation for the correct command.")
-        logger.info(curr_command + ": Failure")
+        if (cmd_parts[0] == "quit"):
+            print("Goodbye!")
+            logger.info(curr_command + ": Success")
+            break;
+        elif (cmd_parts[0] != "aggiestack"):
+            print("Invalid command. Refer to the documentation for the correct command.")
+            logger.info(curr_command + ": Failure")
+        elif (cmd_parts[1] == "config"):
+            handle_config(cmd_parts)
+        elif (cmd_parts[1] == "show"):
+            handle_display(cmd_parts)
+        elif (cmd_parts[1] == "server"):
+            handle_server(cmd_parts)
+        elif (cmd_parts[1] == "admin"):
+            handle_admin(cmd_parts)
+        else:
+            print("Invalid command. Refer to the documentation for the correct command.")
+            logger.info(curr_command + ": Failure")
