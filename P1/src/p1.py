@@ -1,4 +1,5 @@
 import os.path
+import sys
 from new_hardware import NewHardware
 from new_image import NewImage
 from rack import Rack
@@ -21,10 +22,7 @@ flavors = False
 hardware_configs = {}
 image_configs = {}
 flavor_configs = {}
-
 hardware_configs_fixed = {}
-image_configs_fixed = {}
-flavor_configs_fixed = {}
 
 racks = {}
 instances = {}
@@ -40,9 +38,9 @@ def handle_config(cmd_parts):
     global images, image_configs
     global flavors, flavor_configs
     global curr_command,racks,instances,instance_on_server,server_instances,machines_on_racks
-    global hardware_configs_fixed, image_configs_fixed,flavor_configs_fixed
+    global hardware_configs_fixed
     if (len(cmd_parts) != 4):
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command.")
         logger.info(curr_command + ": Failure")
         return;
 
@@ -91,11 +89,11 @@ def handle_config(cmd_parts):
                     machines_on_racks[cfg[1]] = []
                 machines_on_racks[cfg[1]].append(cfg[0])
 
-            print len(hardware_configs), 'hardware configs loaded.'
+            print len(hardware_configs), 'physical servers now available.'
             logger.info(curr_command + ": Success")
 
         else:
-            print("File you specified does not exist!")
+            sys.stderr.write("ERROR: File you specified does not exist." + "\n")
             logger.info(curr_command + ": Failure")
 
     elif (cmd_parts[2] == "--images"):
@@ -114,15 +112,13 @@ def handle_config(cmd_parts):
             for x in range(1, num_configs + 1):
                 cfg = lines[x].split(" ")
                 img = NewImage(cfg[0], cfg[1], cfg[2])
-                imgf = NewImage(cfg[0], cfg[1], cfg[2])
                 image_configs[cfg[0]] = img
-                image_configs_fixed[cfg[0]] = imgf
 
-            print len(image_configs), 'image configs loaded.'
+            print len(image_configs), 'images now available.'
             logger.info(curr_command + ": Success")
 
         else:
-            print("File you specified does not exist!")
+            sys.stderr.write("ERROR: File you specified does not exist." + "\n")
             logger.info(curr_command + ": Failure")
 
     elif (cmd_parts[2] == "--flavors"):
@@ -141,18 +137,16 @@ def handle_config(cmd_parts):
             for x in range(1, num_configs + 1):
                 cfg = lines[x].split(' ')
                 flv = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
-                flvf = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
                 flavor_configs[cfg[0]] = flv
-                flavor_configs_fixed[cfg[0]] = flvf
 
-            print len(flavor_configs), 'flavor configs loaded.'
+            print len(flavor_configs), 'VM flavors now available.'
             logger.info(curr_command + ": Success")
         else:
-            print("File you specified does not exist!")
+            sys.stderr.write("ERROR: File you specified does not exist." + "\n")
             logger.info(curr_command + ": Failure")
 
     else:
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
 
 
@@ -161,15 +155,15 @@ def handle_display(cmd_parts, all=None):
     global images, image_configs
     global flavors, flavor_configs
     global curr_command, racks, instances, instance_on_server, server_instances, machines_on_racks
-    global hardware_configs_fixed, image_configs_fixed, flavor_configs_fixed
+    global hardware_configs_fixed
     if (len(cmd_parts) != 3):
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
         return;
 
     if (cmd_parts[2] == "hardware"):
         if (hardware):
-            print("Hardware configs available:")
+            print("Physical servers available:")
             print("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus")
 
             for key in hardware_configs_fixed:
@@ -178,7 +172,7 @@ def handle_display(cmd_parts, all=None):
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
-            print("Read hardware config first!")
+            sys.stderr.write("ERROR: No physical servers available." + "\n")
             logger.info(curr_command + ": Failure")
 
     elif (cmd_parts[2] == "images"):
@@ -186,13 +180,13 @@ def handle_display(cmd_parts, all=None):
             print("Images available:")
             print("Name, Size, Path")
 
-            for key in image_configs_fixed:
-                img = image_configs_fixed[key]
+            for key in image_configs:
+                img = image_configs[key]
                 print img.name, " ", img.size, " ", img.path
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
-            print("Read images config first!")
+            sys.stderr.write("ERROR: No images available." + "\n")
             logger.info(curr_command + ": Failure")
 
     elif (cmd_parts[2] == "flavors"):
@@ -200,13 +194,13 @@ def handle_display(cmd_parts, all=None):
             print("Flavors available:")
             print("Type, Ram, Disks, VCPUs")
 
-            for key in flavor_configs_fixed:
-                flv = flavor_configs_fixed[key]
+            for key in flavor_configs:
+                flv = flavor_configs[key]
                 print flv.type, " ", flv.ram, " ", flv.disks, " ", flv.vcpus
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
-            print("Read flavors config first!")
+            sys.stderr.write("ERROR: No flavors available." + "\n")
             logger.info(curr_command + ": Failure")
 
     elif (cmd_parts[2] == "all"):
@@ -223,11 +217,11 @@ def handle_display(cmd_parts, all=None):
 
             logger.info(curr_command + ": Success")
         else:
-            print("Read hardware, image and flavor configs first.")
+            sys.stderr.write("ERROR: Hardware/Image/Flavor not available." + "\n")
             logger.info(curr_command + ": Failure")
 
     else:
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
 
 
@@ -236,15 +230,15 @@ def handle_admin(cmd_parts):
     global images, image_configs
     global flavors, flavor_configs
     global curr_command, racks, instances, instance_on_server, server_instances, machines_on_racks
-    global hardware_configs_fixed, image_configs_fixed, flavor_configs_fixed
+    global hardware_configs_fixed
     if len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "hardware":
 
         if (hardware):
-            print("Hardware configs available:")
+            print("Physical servers available:")
             print("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus")
 
             if len(hardware_configs) == 0:
-                print("No hardware available")
+                print("No physical servers available.")
                 logger.info(curr_command + ": Success")
                 return
 
@@ -254,7 +248,7 @@ def handle_admin(cmd_parts):
 
             logger.info(curr_command + ": Success")
         else:
-            print("Read hardware config first!")
+            sys.stderr.write("ERROR: No physical servers available." + "\n")
             logger.info(curr_command + ": Failure")
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "instances":
@@ -274,7 +268,7 @@ def handle_admin(cmd_parts):
     elif len(cmd_parts) == 4 and cmd_parts[2] == "evacuate":
         rack_name = cmd_parts[3]
         if racks.get(rack_name) == None:
-            print("Rack does not exist")
+            sys.stderr.write("ERROR: Rack does not exist." + "\n")
             logger.info(curr_command + ": Failure")
             return
 
@@ -309,23 +303,23 @@ def handle_admin(cmd_parts):
                         server_instances[key].append(each_instance)
                         break
                 if done:
-                    print(each_instance + " migrated")
+                    print(each_instance + " successfully migrated.")
                 else:
                     del instances[each_instance]
                     del instance_on_server[each_instance]
-                    print(each_instance + " not migrated.")
+                    print(each_instance + " could not be migrated.")
             del hardware_configs[machine]
-            print(machine + " deleted")
+            print(machine + " removed.")
             del server_instances[machine]
         machines_on_racks[rack_name] = []
 
-        print("Migrated machines from the given rack. Some machines might not have migrated due lo lack of space.")
+        print("Rack evacuation done.")
         logger.info(curr_command + ": Success")
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "remove":
 
         if hardware_configs.get(cmd_parts[3]) == None:
-            print("Machine does not exist")
+            sys.stderr.write("ERROR: Server does not exist" + "\n")
             logger.info(curr_command + ": Failure")
             return
 
@@ -337,30 +331,33 @@ def handle_admin(cmd_parts):
             del server_instances[cmd_parts[3]]
 
         del hardware_configs[cmd_parts[3]]
-        del hardware_configs_fixed[cmd_parts[3]]
 
-        print("Machine successfully removed")
+        print("Machine successfully removed.")
         logger.info(curr_command + ": Success")
         return
 
-    elif len(cmd_parts) == 14 and cmd_parts[2] == "add" and cmd_parts[3] == "-mem" and cmd_parts[5] == "-disk" and cmd_parts[7] == "-vcpus" and cmd_parts[9] == "-ip" and cmd_parts[11] == "-rack":
+    elif len(cmd_parts) == 14 and cmd_parts[2] == "add" and cmd_parts[3] == "--mem" and cmd_parts[5] == "--disk" and cmd_parts[7] == "--vcpus" and cmd_parts[9] == "--ip" and cmd_parts[11] == "--rack":
 
         if(hardware_configs.get(cmd_parts[13]) != None):
-            print("Machine with the similar name exists")
+            sys.stderr.write("ERROR: Machine with the name already exists." + "\n")
+            logger.info(curr_command + ": Failure")
+            return
+
+        if(racks.get(cmd_parts[12]) == None):
+            sys.stderr.write("ERROR: Rack does not exist." + "\n")
             logger.info(curr_command + ": Failure")
             return
 
         hw = NewHardware(cmd_parts[13], cmd_parts[12], cmd_parts[10], cmd_parts[4], cmd_parts[6], cmd_parts[8])
         hw1 = NewHardware(cmd_parts[13], cmd_parts[12], cmd_parts[10], cmd_parts[4], cmd_parts[6], cmd_parts[8])
         hardware_configs[cmd_parts[13]] = hw
-        hardware_configs_fixed[cmd_parts[13]] = hw1
 
-        print("Machine added.")
+        print("Machine successfully added.")
         logger.info(curr_command + ": Success")
         return
 
     else:
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
 
 def can_host(mac, vm):
@@ -375,21 +372,21 @@ def handle_server(cmd_parts):
     global images, image_configs
     global flavors, flavor_configs
     global curr_command, racks, instances, instance_on_server, server_instances, machines_on_racks
-    global hardware_configs_fixed, image_configs_fixed, flavor_configs_fixed
+    global hardware_configs_fixed
     if(not (hardware and images and flavors)):
-        print("First load hardware, images and flavors.")
+        sys.stderr.write("ERROR: Load all hardware, images and flavors." + "\n")
         logger.info(curr_command + ": Failure")
         return
 
     if(len(cmd_parts) <= 2):
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
         return
 
     if cmd_parts[2] == "list" and len(cmd_parts) == 3:
 
         if len(instances) == 0:
-            print("No instances present!")
+            print("No instances present.")
             logger.info(curr_command + ": Success")
             return
 
@@ -403,7 +400,7 @@ def handle_server(cmd_parts):
     elif cmd_parts[2] == "delete" and len(cmd_parts) == 4:
 
         if instances.get(cmd_parts[3]) == None:
-            print("Instance does not exist")
+            sys.stderr.write("ERROR: Instance does not exist" + "\n")
             logger.info(curr_command + ": Failure")
             return
 
@@ -428,17 +425,17 @@ def handle_server(cmd_parts):
         img = cmd_parts[4]
         flv = cmd_parts[6]
         if image_configs.get(img) == None:
-            print("Image specified is not available.")
+            sys.stderr.write("ERROR: Image not available." + "\n")
             logger.info(curr_command + ": Failure")
             return
 
         if flavor_configs.get(flv) == None:
-            print("Flavor specified is not available.")
+            sys.stderr.write("ERROR: Flavor not available." + "\n")
             logger.info(curr_command + ": Failure")
             return
 
         if instances.get(cmd_parts[7]) != None:
-            print("Use a different instance name.")
+            sys.stderr.write("ERROR: Instance with the name already exists." + "\n")
             logger.info(curr_command + ": Failure")
             return
 
@@ -465,32 +462,31 @@ def handle_server(cmd_parts):
                 logger.info(curr_command + ": Success")
                 return
 
-        print("Resources unavailable!")
+        sys.stderr.write("ERROR: Resources unavailable." + "\n")
         logger.info(curr_command + ": Failure")
         return
 
     else:
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + " : Failure")
 
-
-with open('input.txt', 'r') as f:
+counter = 1
+with open('../input.txt', 'r') as f:
     for cmd in f:
+        print ("Command# " + str(counter) + ":")
+        counter += 1
         cmd = cmd.rstrip('\n')
         curr_command = cmd
         print cmd
         cmd_parts = cmd.split(" ")
 
-        if (len(cmd_parts) <= 0):
-            print("Invalid command. Refer to the documentation for the correct command.")
+        if (len(cmd_parts) <= 1):
+            sys.stderr.write("ERROR: Invalid command." + "\n")
             logger.info(curr_command + ": Failure")
+            continue
 
-        if (cmd_parts[0] == "quit"):
-            print("Goodbye!")
-            logger.info(curr_command + ": Success")
-            break;
-        elif (cmd_parts[0] != "aggiestack"):
-            print("Invalid command. Refer to the documentation for the correct command.")
+        if (cmd_parts[0] != "aggiestack"):
+            sys.stderr.write("ERROR: Invalid command." + "\n")
             logger.info(curr_command + ": Failure")
         elif (cmd_parts[1] == "config"):
             handle_config(cmd_parts)
@@ -501,5 +497,6 @@ with open('input.txt', 'r') as f:
         elif (cmd_parts[1] == "admin"):
             handle_admin(cmd_parts)
         else:
-            print("Invalid command. Refer to the documentation for the correct command.")
+            sys.stderr.write("ERROR: Invalid command." + "\n")
             logger.info(curr_command + ": Failure")
+        print ("************************************************************************************************************")
