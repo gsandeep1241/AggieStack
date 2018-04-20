@@ -471,7 +471,7 @@ def handle_server(cmd_parts):
         logger.info(curr_command + " : Failure")
 
 counter = 1
-with open('../input.txt', 'r') as f:
+with open('../input-p1.txt', 'r') as f:
     for cmd in f:
         print ("Command# " + str(counter) + ":")
         counter += 1
@@ -483,6 +483,8 @@ with open('../input.txt', 'r') as f:
         if (len(cmd_parts) <= 1):
             sys.stderr.write("ERROR: Invalid command." + "\n")
             logger.info(curr_command + ": Failure")
+            print (
+                "************************************************************************************************************")
             continue
 
         if (cmd_parts[0] != "aggiestack"):

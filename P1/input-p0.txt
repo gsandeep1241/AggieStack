@@ -1,0 +1,9 @@
+aggiestack config --hardware hdwr-config.txt
+aggiestack show hardware
+aggiestack config --images image-config.txt
+aggiestack show images
+aggiestack config --flavors flavor-config.txt
+aggiestack show flavors
+aggiestack show all
+aggiestack admin show hardware
+aggiestack admin can_host m1 small

@@ -1,4 +1,5 @@
 import os.path
+import sys
 from hardware import Hardware
 from image import Image
 from flavor import Flavor
@@ -28,7 +29,7 @@ def handle_config(cmd_parts):
     global flavors, flavor_configs
     global curr_command
     if(len(cmd_parts) != 4):
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
         return;
         
@@ -50,11 +51,11 @@ def handle_config(cmd_parts):
                 h = Hardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4])
                 hardware_configs[cfg[0]] = h
 
-            print len(hardware_configs), 'hardware configs loaded.'
+            print len(hardware_configs), 'physical servers now available.'
             logger.info(curr_command + ": Success")
 
         else:
-            print("File you specified does not exist!")
+            sys.stderr.write("ERROR: File you specified does not exist." + "\n")
             logger.info(curr_command + ": Failure")
             
     elif(cmd_parts[2] == "--images"):
@@ -75,11 +76,11 @@ def handle_config(cmd_parts):
                 img = Image(cfg[0], cfg[1])
                 image_configs[cfg[0]] = img
 
-            print len(image_configs), 'image configs loaded.'
+            print len(image_configs), 'images now available.'
             logger.info(curr_command + ": Success")
 
         else:
-            print("File you specified does not exist!")
+            sys.stderr.write("ERROR: File you specified does not exist." + "\n")
             logger.info(curr_command + ": Failure")
             
     elif(cmd_parts[2] == "--flavors"):
@@ -100,14 +101,14 @@ def handle_config(cmd_parts):
                 flv = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
                 flavor_configs[cfg[0]] = flv
 
-            print len(flavor_configs), 'flavor configs loaded.'
+            print len(flavor_configs), 'VM flavors now available.'
             logger.info(curr_command + ": Success")
         else:
-            print("File you specified does not exist!")
+            sys.stderr.write("ERROR: File you specified does not exist." + "\n")
             logger.info(curr_command + ": Failure")
             
     else:
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
         
 
@@ -118,7 +119,7 @@ def handle_display(cmd_parts, all=None):
     global flavors
     global curr_command
     if(len(cmd_parts) != 3):
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
         return;
         
@@ -133,7 +134,7 @@ def handle_display(cmd_parts, all=None):
             if(all == None):
                 logger.info(curr_command + ": Success")
         else:
-            print("Read hardware config first!")
+            sys.stderr.write("ERROR: No physical servers available." + "\n")
             logger.info(curr_command + ": Failure")
             
     elif(cmd_parts[2] == "images"):
@@ -147,7 +148,7 @@ def handle_display(cmd_parts, all=None):
             if(all == None):
                 logger.info(curr_command + ": Success")
         else:
-            print("Read images config first!")
+            sys.stderr.write("ERROR: No images available." + "\n")
             logger.info(curr_command + ": Failure")
             
     elif(cmd_parts[2] == "flavors"):
@@ -161,7 +162,7 @@ def handle_display(cmd_parts, all=None):
             if(all == None):
                 logger.info(curr_command + ": Success")
         else:
-            print("Read flavors config first!")
+            sys.stderr.write("ERROR: No flavors available." + "\n")
             logger.info(curr_command + ": Failure")
             
     elif(cmd_parts[2] == "all"):
@@ -178,11 +179,11 @@ def handle_display(cmd_parts, all=None):
 
             logger.info(curr_command + ": Success")
         else:
-            print("Read hardware, image and flavor configs first.")
+            sys.stderr.write("ERROR: Hardware/Image/Flavor not available." + "\n")
             logger.info(curr_command + ": Failure")
             
     else:
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
         
 def handle_admin(cmd_parts):
@@ -194,7 +195,7 @@ def handle_admin(cmd_parts):
         flv = cmd_parts[4]
 
         if (hardware_configs.get(mac_name) == None or flavor_configs.get(flv) == None):
-            print("Specified Hardware or Flavor does not exist.")
+            sys.stderr.write("Hardware/Flavor not available" + "\n")
             logger.info(curr_command + ": Failure")
             return
 
@@ -207,31 +208,37 @@ def handle_admin(cmd_parts):
             print("No")
         logger.info(curr_command + ": Success")
     else:
-        print("Invalid command. Refer to the documentation for the correct command.")
+        sys.stderr.write("ERROR: Invalid command." + "\n")
         logger.info(curr_command + ": Failure")
 
-while True:
-    cmd = raw_input('Enter your command: ')
-    curr_command = cmd
-    cmd_parts = cmd.split(" ")
-    
-    if(len(cmd_parts) <= 0 or len(cmd_parts) > 5):
-        print("Invalid command. Refer to the documentation for the correct command.")
-        logger.info(curr_command + ": Failure")
-    
-    if(cmd_parts[0] == "quit"):
-        print("Goodbye!")
-        logger.info(curr_command + ": Success")
-        break;
-    elif(cmd_parts[0] != "aggiestack"):
-        print("Invalid command. Refer to the documentation for the correct command.")
-        logger.info(curr_command + ": Failure")
-    elif(cmd_parts[1] == "config"):
-        handle_config(cmd_parts)
-    elif(cmd_parts[1] == "show"):
-        handle_display(cmd_parts)
-    elif(cmd_parts[1] == "admin"):
-        handle_admin(cmd_parts)
-    else:
-        print("Invalid command. Refer to the documentation for the correct command.")
-        logger.info(curr_command + ": Failure")
+counter = 1
+with open('../input-p0.txt', 'r') as f:
+    for cmd in f:
+        print ("Command# " + str(counter) + ":")
+        counter += 1
+        cmd = cmd.rstrip('\n')
+        curr_command = cmd
+        print cmd
+        cmd_parts = cmd.split(" ")
+
+        if(len(cmd_parts) <= 0 or len(cmd_parts) > 5):
+            sys.stderr.write("ERROR: Invalid command." + "\n")
+            logger.info(curr_command + ": Failure")
+            print (
+                "************************************************************************************************************")
+            continue
+
+        if(cmd_parts[0] != "aggiestack"):
+            sys.stderr.write("ERROR: Invalid command." + "\n")
+            logger.info(curr_command + ": Failure")
+        elif(cmd_parts[1] == "config"):
+            handle_config(cmd_parts)
+        elif(cmd_parts[1] == "show"):
+            handle_display(cmd_parts)
+        elif(cmd_parts[1] == "admin"):
+            handle_admin(cmd_parts)
+        else:
+            sys.stderr.write("ERROR: Invalid command." + "\n")
+            logger.info(curr_command + ": Failure")
+        print (
+            "************************************************************************************************************")
