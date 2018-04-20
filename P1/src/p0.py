@@ -51,7 +51,7 @@ def handle_config(cmd_parts):
                 h = Hardware(cfg[0], cfg[1], cfg[2], cfg[3], cfg[4])
                 hardware_configs[cfg[0]] = h
 
-            print len(hardware_configs), 'physical servers now available.'
+            sys.stdout.write(str(len(hardware_configs)) + ' physical servers now available.' + "\n")
             logger.info(curr_command + ": Success")
 
         else:
@@ -76,7 +76,7 @@ def handle_config(cmd_parts):
                 img = Image(cfg[0], cfg[1])
                 image_configs[cfg[0]] = img
 
-            print len(image_configs), 'images now available.'
+            sys.stdout.write(str(len(image_configs)) + ' images now available.' + "\n")
             logger.info(curr_command + ": Success")
 
         else:
@@ -101,7 +101,7 @@ def handle_config(cmd_parts):
                 flv = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
                 flavor_configs[cfg[0]] = flv
 
-            print len(flavor_configs), 'VM flavors now available.'
+            sys.stdout.write(str(len(flavor_configs)) + ' VM flavors now available.' + "\n")
             logger.info(curr_command + ": Success")
         else:
             sys.stderr.write("ERROR: File you specified does not exist." + "\n")
@@ -125,12 +125,12 @@ def handle_display(cmd_parts, all=None):
         
     if(cmd_parts[2] == "hardware"):
         if(hardware):
-            print("Hardware configs available:")
-            print("Name, IP, RAM, Num_Disks, Num_Vcpus")
+            sys.stdout.write("Hardware configs available:" + "\n")
+            sys.stdout.write("Name, IP, RAM, Num_Disks, Num_Vcpus" + "\n")
 
             for key in hardware_configs:
                 hw = hardware_configs[key]
-                print hw.name, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
+                sys.stdout.write(hw.name + "  " + hw.ip + "  " + hw.mem + "  " +  hw.num_disks +  "  " + hw.num_vcpus + "\n")
             if(all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -139,12 +139,12 @@ def handle_display(cmd_parts, all=None):
             
     elif(cmd_parts[2] == "images"):
         if(images):
-            print("Images available:")
-            print("Name, Path")
+            sys.stdout.write("Images available:" + "\n")
+            sys.stdout.write("Name, Path" + "\n")
 
             for key in image_configs:
                 img = image_configs[key]
-                print img.name, " : ", img.path
+                sys.stdout.write(img.name + '  ' + img.path + "\n")
             if(all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -153,12 +153,12 @@ def handle_display(cmd_parts, all=None):
             
     elif(cmd_parts[2] == "flavors"):
         if(flavors):
-            print("Flavors available:")
-            print("Type, Ram, Disks, VCPUs")
+            sys.stdout.write("Flavors available:" + "\n")
+            sys.stdout.write("Type, Ram, Disks, VCPUs" + "\n")
 
             for key in flavor_configs:
                 flv = flavor_configs[key]
-                print flv.type, " ", flv.ram, " ", flv.disks, " ", flv.vcpus
+                sys.stdout.write(flv.type + "  " + flv.ram + "  " + flv.disks + "  " + flv.vcpus + "\n")
             if(all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -203,9 +203,9 @@ def handle_admin(cmd_parts):
         vm = flavor_configs[flv]
 
         if(int(mac.mem) >= int(vm.ram) and int(mac.num_disks) >= int(vm.disks) and int(mac.num_vcpus) >= int(vm.vcpus)):
-            print("Yes")
+            sys.stdout.write("Yes" + "\n")
         else:
-            print("No")
+            sys.stdout.write("No" + "\n")
         logger.info(curr_command + ": Success")
     else:
         sys.stderr.write("ERROR: Invalid command." + "\n")
@@ -214,18 +214,18 @@ def handle_admin(cmd_parts):
 counter = 1
 with open('../input-p0.txt', 'r') as f:
     for cmd in f:
-        print ("Command# " + str(counter) + ":")
+        sys.stdout.write("Command# " + str(counter) + ":" + "\n")
         counter += 1
         cmd = cmd.rstrip('\n')
         curr_command = cmd
-        print cmd
+        sys.stdout.write(cmd + "\n")
         cmd_parts = cmd.split(" ")
 
         if(len(cmd_parts) <= 0 or len(cmd_parts) > 5):
             sys.stderr.write("ERROR: Invalid command." + "\n")
             logger.info(curr_command + ": Failure")
-            print (
-                "************************************************************************************************************")
+            sys.stdout.write(
+                "************************************************************************************************************" + "\n")
             continue
 
         if(cmd_parts[0] != "aggiestack"):
@@ -240,5 +240,5 @@ with open('../input-p0.txt', 'r') as f:
         else:
             sys.stderr.write("ERROR: Invalid command." + "\n")
             logger.info(curr_command + ": Failure")
-        print (
-            "************************************************************************************************************")
+        sys.stdout.write(
+            "************************************************************************************************************" + "\n")
