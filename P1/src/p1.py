@@ -262,7 +262,7 @@ def handle_admin(cmd_parts):
         for key in instance_on_server:
             sys.stdout.write(key + "  " + instance_on_server[key] + "\n")
 
-        logger.info(curr_command + ": Success")
+        logger.info(curr_command + " :Success")
         return
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "evacuate":
