@@ -89,7 +89,7 @@ def handle_config(cmd_parts):
                     machines_on_racks[cfg[1]] = []
                 machines_on_racks[cfg[1]].append(cfg[0])
 
-            print len(hardware_configs), 'physical servers now available.'
+            sys.stdout.write(str(len(hardware_configs)) + ' physical servers now available.' + "\n")
             logger.info(curr_command + ": Success")
 
         else:
@@ -114,7 +114,7 @@ def handle_config(cmd_parts):
                 img = NewImage(cfg[0], cfg[1], cfg[2])
                 image_configs[cfg[0]] = img
 
-            print len(image_configs), 'images now available.'
+            sys.stdout.write(str(len(image_configs)) + ' images now available.' + "\n")
             logger.info(curr_command + ": Success")
 
         else:
@@ -139,7 +139,7 @@ def handle_config(cmd_parts):
                 flv = Flavor(cfg[0], cfg[1], cfg[2], cfg[3])
                 flavor_configs[cfg[0]] = flv
 
-            print len(flavor_configs), 'VM flavors now available.'
+            sys.stdout.write(str(len(flavor_configs)) + ' VM flavors now available.' + "\n")
             logger.info(curr_command + ": Success")
         else:
             sys.stderr.write("ERROR: File you specified does not exist." + "\n")
@@ -163,12 +163,12 @@ def handle_display(cmd_parts, all=None):
 
     if (cmd_parts[2] == "hardware"):
         if (hardware):
-            print("Physical servers available:")
-            print("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus")
+            sys.stdout.write("Physical servers available:" + "\n")
+            sys.stdout.write("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus" + "\n")
 
             for key in hardware_configs_fixed:
                 hw = hardware_configs_fixed[key]
-                print hw.name, " ", hw.rack, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
+                sys.stdout.write(hw.name + "  " + hw.rack + "  " + hw.ip + "  " + hw.mem + "  " + hw.num_disks + "  " + hw.num_vcpus + "\n")
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -177,12 +177,12 @@ def handle_display(cmd_parts, all=None):
 
     elif (cmd_parts[2] == "images"):
         if (images):
-            print("Images available:")
-            print("Name, Size, Path")
+            sys.stdout.write("Images available:" + "\n")
+            sys.stdout.write("Name, Size, Path" + "\n")
 
             for key in image_configs:
                 img = image_configs[key]
-                print img.name, " ", img.size, " ", img.path
+                sys.stdout.write(img.name + "  " + img.size + "  " + img.path + "\n")
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -191,12 +191,12 @@ def handle_display(cmd_parts, all=None):
 
     elif (cmd_parts[2] == "flavors"):
         if (flavors):
-            print("Flavors available:")
-            print("Type, Ram, Disks, VCPUs")
+            sys.stdout.write("Flavors available:" + "\n")
+            sys.stdout.write("Type, Ram, Disks, VCPUs" + "\n")
 
             for key in flavor_configs:
                 flv = flavor_configs[key]
-                print flv.type, " ", flv.ram, " ", flv.disks, " ", flv.vcpus
+                sys.stdout.write(flv.type + "  " + flv.ram + "  " + flv.disks + "  " + flv.vcpus + "\n")
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -234,17 +234,17 @@ def handle_admin(cmd_parts):
     if len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "hardware":
 
         if (hardware):
-            print("Physical servers available:")
-            print("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus")
+            sys.stdout.write("Physical servers available:" + "\n")
+            sys.stdout.write("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus" + "\n")
 
             if len(hardware_configs) == 0:
-                print("No physical servers available.")
+                sys.stdout.write("No physical servers available." + "\n")
                 logger.info(curr_command + ": Success")
                 return
 
             for key in hardware_configs:
                 hw = hardware_configs[key]
-                print hw.name, " ", hw.rack, " ", hw.ip, " ", hw.mem, " ", hw.num_disks, " ", hw.num_vcpus
+                sys.stdout.write(hw.name + "  " + hw.rack + "  " + hw.ip + "  " + hw.mem + "  " + hw.num_disks + "  " + hw.num_vcpus + "\n")
 
             logger.info(curr_command + ": Success")
         else:
@@ -254,13 +254,13 @@ def handle_admin(cmd_parts):
     elif len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "instances":
 
         if len(instance_on_server) == 0:
-            print("No instances present.")
+            sys.stdout.write("No instances present." + "\n")
             logger.info(curr_command + " :Success")
             return
 
-        print "Instance", "Physical Server"
+        sys.stdout.write("Instance" + ", Physical Server" + "\n")
         for key in instance_on_server:
-            print key, " ", instance_on_server[key]
+            sys.stdout.write(key + "  " + instance_on_server[key] + "\n")
 
         logger.info(curr_command + ": Success")
         return
@@ -276,7 +276,7 @@ def handle_admin(cmd_parts):
         for machine in all_machines_on_rack:
             if server_instances.get(machine) == None:
                 del hardware_configs[machine]
-                print(machine + " deleted")
+                sys.stdout.write(machine + " deleted" + "\n")
                 continue
             all_instances = server_instances[machine]
             for each_instance in all_instances:
@@ -303,17 +303,17 @@ def handle_admin(cmd_parts):
                         server_instances[key].append(each_instance)
                         break
                 if done:
-                    print(each_instance + " successfully migrated.")
+                    sys.stdout.write(each_instance + " successfully migrated." + "\n")
                 else:
                     del instances[each_instance]
                     del instance_on_server[each_instance]
-                    print(each_instance + " could not be migrated.")
+                    sys.stdout.write(each_instance + " could not be migrated." + "\n")
             del hardware_configs[machine]
-            print(machine + " removed.")
+            sys.stdout.write(machine + " removed." + "\n")
             del server_instances[machine]
         machines_on_racks[rack_name] = []
 
-        print("Rack evacuation done.")
+        sys.stdout.write("Rack evacuation done." + "\n")
         logger.info(curr_command + ": Success")
 
     elif len(cmd_parts) == 4 and cmd_parts[2] == "remove":
@@ -332,7 +332,7 @@ def handle_admin(cmd_parts):
 
         del hardware_configs[cmd_parts[3]]
 
-        print("Machine successfully removed.")
+        sys.stdout.write("Machine successfully removed." + "\n")
         logger.info(curr_command + ": Success")
         return
 
@@ -352,7 +352,7 @@ def handle_admin(cmd_parts):
         hw1 = NewHardware(cmd_parts[13], cmd_parts[12], cmd_parts[10], cmd_parts[4], cmd_parts[6], cmd_parts[8])
         hardware_configs[cmd_parts[13]] = hw
 
-        print("Machine successfully added.")
+        sys.stdout.write("Machine successfully added." + "\n")
         logger.info(curr_command + ": Success")
         return
 
@@ -386,13 +386,13 @@ def handle_server(cmd_parts):
     if cmd_parts[2] == "list" and len(cmd_parts) == 3:
 
         if len(instances) == 0:
-            print("No instances present.")
+            sys.stdout.write("No instances present." + "\n")
             logger.info(curr_command + ": Success")
             return
 
-        print "Name", "Image", "Flavor"
+        sys.stdout.write("Name" + ", Image" + ", Flavor" + "\n")
         for key in instances:
-            print instances[key].name, " ", instances[key].image, " ", instances[key].flavor
+            sys.stdout.write(instances[key].name + "  " + instances[key].image + "  " + instances[key].flavor + "\n")
 
         logger.info(curr_command + ": Success")
         return
@@ -416,7 +416,7 @@ def handle_server(cmd_parts):
 
         server_instances[mac.name].remove(cmd_parts[3])
 
-        print("Successfully deleted instance.")
+        sys.stdout.write("Successfully deleted instance." + "\n")
         logger.info(curr_command + ": Success")
         return
 
@@ -458,7 +458,7 @@ def handle_server(cmd_parts):
                     server_instances[key] = []
                 server_instances[key].append(cmd_parts[7])
 
-                print("Successfully created an instance.")
+                sys.stdout.write("Successfully created an instance." + "\n")
                 logger.info(curr_command + ": Success")
                 return
 
@@ -473,18 +473,18 @@ def handle_server(cmd_parts):
 counter = 1
 with open('../input-p1.txt', 'r') as f:
     for cmd in f:
-        print ("Command# " + str(counter) + ":")
+        sys.stdout.write("Command# " + str(counter) + ":" + "\n")
         counter += 1
         cmd = cmd.rstrip('\n')
         curr_command = cmd
-        print cmd
+        sys.stdout.write(cmd + "\n")
         cmd_parts = cmd.split(" ")
 
         if (len(cmd_parts) <= 1):
             sys.stderr.write("ERROR: Invalid command." + "\n")
             logger.info(curr_command + ": Failure")
-            print (
-                "************************************************************************************************************")
+            sys.stdout.write(
+                "************************************************************************************************************" + "\n")
             continue
 
         if (cmd_parts[0] != "aggiestack"):
@@ -501,4 +501,4 @@ with open('../input-p1.txt', 'r') as f:
         else:
             sys.stderr.write("ERROR: Invalid command." + "\n")
             logger.info(curr_command + ": Failure")
-        print ("************************************************************************************************************")
+        sys.stdout.write("************************************************************************************************************" + "\n")
