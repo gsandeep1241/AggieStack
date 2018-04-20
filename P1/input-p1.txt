@@ -2,15 +2,33 @@ aggiestack config --hardware hdwr-config.txt
 aggiestack config --images image-config.txt
 aggiestack config --flavors flavor-config.txt
 aggiestack show all
-aggiestack admin show hardware
-aggiestack server create --image linux-ubuntu --flavor small my-first-instance
+aggiestack server create --image linux-ubuntu --flavor xlarge my-first-instance
 aggiestack server create --image linux-ubuntu --flavor medium my-second-instance
+aggiestack server create --image linux-ubuntu --flavor xlarge my-third-instance
+aggiestack server create --image linux-ubuntu --flavor medium my-fourth-instance
+aggiestack admin show hardware
 aggiestack admin show instances
-aggiestack admin evacuate r1
-aggiestack admin add --mem 8 --disk 4 --vcpus 4 --ip 128.0.0.1 --rack r1 newmachine
-aggiestack admin show instances
-aggiestack server delete my-first-instance
 aggiestack server list
+aggiestack admin evacuate r1
+aggiestack admin show hardware
 aggiestack admin show instances
-aggiestack admin remove k2
+aggiestack server list
+aggiestack admin add --mem 8 --disk 4 --vcpus 4 --ip 128.0.0.1 --rack r2 newmachine1
+aggiestack admin add --mem 8 --disk 4 --vcpus 4 --ip 128.0.0.1 --rack r2 newmachine2
+aggiestack admin add --mem 8 --disk 4 --vcpus 4 --ip 128.0.0.1 --rack r1 newmachine3
+aggiestack admin add --mem 8 --disk 4 --vcpus 4 --ip 128.0.0.1 --rack r1 newmachine4
+aggiestack admin show hardware
 aggiestack admin show instances
+aggiestack server list
+aggiestack admin evacuate r2
+aggiestack admin show hardware
+aggiestack admin show instances
+aggiestack server list
+aggiestack server delete my-second-instance
+aggiestack server create --image linux-ubuntu --flavor xlarge my-first-instance
+aggiestack server create --image linux-ubuntu --flavor small my-fifth-instance
+aggiestack server create --image linux-ubuntu --flavor xlarge my-third-instance
+aggiestack server create --image linux-ubuntu --flavor medium my-fourth-instance
+aggiestack admin show hardware
+aggiestack admin show instances
+aggiestack server list

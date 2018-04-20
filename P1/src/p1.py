@@ -168,7 +168,7 @@ def handle_display(cmd_parts, all=None):
 
             for key in hardware_configs_fixed:
                 hw = hardware_configs_fixed[key]
-                sys.stdout.write(hw.name + "  " + hw.rack + "  " + hw.ip + "  " + hw.mem + "  " + hw.num_disks + "  " + hw.num_vcpus + "\n")
+                sys.stdout.write(hw.name + "  " + hw.rack + "  " + hw.ip + "  " + str(hw.mem) + "  " + str(hw.num_disks) + "  " + str(hw.num_vcpus) + "\n")
             if (all == None):
                 logger.info(curr_command + ": Success")
         else:
@@ -234,17 +234,19 @@ def handle_admin(cmd_parts):
     if len(cmd_parts) == 4 and cmd_parts[2] == "show" and cmd_parts[3] == "hardware":
 
         if (hardware):
-            sys.stdout.write("Physical servers available:" + "\n")
-            sys.stdout.write("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus" + "\n")
 
             if len(hardware_configs) == 0:
                 sys.stdout.write("No physical servers available." + "\n")
                 logger.info(curr_command + ": Success")
                 return
 
+            sys.stdout.write("Physical servers available:" + "\n")
+            sys.stdout.write("Name, Rack, IP, RAM, Num_Disks, Num_Vcpus" + "\n")
+
+
             for key in hardware_configs:
                 hw = hardware_configs[key]
-                sys.stdout.write(hw.name + "  " + hw.rack + "  " + hw.ip + "  " + hw.mem + "  " + hw.num_disks + "  " + hw.num_vcpus + "\n")
+                sys.stdout.write(hw.name + "  " + hw.rack + "  " + hw.ip + "  " + str(hw.mem) + "  " + str(hw.num_disks) + "  " + str(hw.num_vcpus) + "\n")
 
             logger.info(curr_command + ": Success")
         else:
@@ -330,6 +332,7 @@ def handle_admin(cmd_parts):
                 del instances[ins]
             del server_instances[cmd_parts[3]]
 
+        machines_on_racks[hardware_configs[cmd_parts[3]].rack].remove(cmd_parts[3])
         del hardware_configs[cmd_parts[3]]
 
         sys.stdout.write("Machine successfully removed." + "\n")
@@ -349,8 +352,8 @@ def handle_admin(cmd_parts):
             return
 
         hw = NewHardware(cmd_parts[13], cmd_parts[12], cmd_parts[10], cmd_parts[4], cmd_parts[6], cmd_parts[8])
-        hw1 = NewHardware(cmd_parts[13], cmd_parts[12], cmd_parts[10], cmd_parts[4], cmd_parts[6], cmd_parts[8])
         hardware_configs[cmd_parts[13]] = hw
+        machines_on_racks[cmd_parts[12]].append(cmd_parts[13])
 
         sys.stdout.write("Machine successfully added." + "\n")
         logger.info(curr_command + ": Success")
