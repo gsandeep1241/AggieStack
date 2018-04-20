@@ -35,7 +35,7 @@ def handle_config(cmd_parts):
         
     if(cmd_parts[2] == "--hardware"):
         file = cmd_parts[3]
-        my_file = "../config/" + file
+        my_file = "../p0_config/" + file
         
         if (os.path.exists(my_file)):
 
@@ -60,7 +60,7 @@ def handle_config(cmd_parts):
             
     elif(cmd_parts[2] == "--images"):
         file = cmd_parts[3]
-        my_file = "../config/" + file
+        my_file = "../p0_config/" + file
         
         if (os.path.exists(my_file)):
 
@@ -85,7 +85,7 @@ def handle_config(cmd_parts):
             
     elif(cmd_parts[2] == "--flavors"):
         file = cmd_parts[3]
-        my_file = "../config/" + file
+        my_file = "../p0_config/" + file
         
         if (os.path.exists(my_file)):
 
